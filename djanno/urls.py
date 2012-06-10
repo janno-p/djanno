@@ -1,8 +1,7 @@
 from django.conf.urls import patterns, include, url
 
-# Uncomment the next two lines to enable the admin:
-# from django.contrib import admin
-# admin.autodiscover()
+from django.contrib import admin
+admin.autodiscover()
 
 urlpatterns = patterns('',
     # Examples:
@@ -12,6 +11,10 @@ urlpatterns = patterns('',
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
-    # Uncomment the next line to enable the admin:
-    # url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', include(admin.site.urls)),
+
+    url(r'^coins/$', 'coins.views.index'),
+    url(r'^coins/(?P<coin_id>\d+)/$', 'coins.views.detail'),
+    url(r'^coins/(?P<coin_id>\d+)/results/$', 'coins.views.results'),
+    url(r'^coins/(?P<coin_id>\d+)/vote/$', 'coins.views.vote'),
 )

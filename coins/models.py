@@ -13,6 +13,9 @@ class Country(models.Model):
     name = models.CharField(max_length=32, unique=True)
     genitive = models.CharField(max_length=32)
 
+    class Meta:
+        verbose_name_plural = 'Countries'
+
     def __unicode__(self):
         return self.name
 
@@ -28,4 +31,4 @@ class Coin(models.Model):
     collected_by = models.CharField(max_length=255, null=True)
 
     def __unicode__(self):
-        return "%s - %s" % (self.country.name, self.nominal_value.value)
+        return "%s | %s" % (self.country.name, self.nominal_value.value)
