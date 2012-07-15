@@ -1,13 +1,14 @@
-from django.core.urlresolvers import reverse
-from django.http import HttpResponse
-from coins.models import Coin, Country
+from django.shortcuts import get_object_or_404, render_to_response
+from coins.models import Country
 
 def index(request):
     countries = Country.objects.all().order_by('name')
-    output = '<br />'.join(['<a href="%s">%s</a>' % (reverse(country, args=[c.code]), c) for c in countries])
-    return HttpResponse("<h1>Country list</h1><p>%s</p>" % output)
+    return render_to_response('coins/index.html', {
+        'countries': countries
+    })
 
 def country(request, country_code):
-    coins = Coin.objects.filter(country__code=country_code)
-    output = '<br />'.join(['<img src="%s" />' % c.small_image_url for c in coins])
-    return HttpResponse("<h1>Looking at coins from %s</h1><p>%s</p>" % (country_code, output))
+    country = get_object_or_404(Country, code=country_code)
+    return render_to_response('coins/country.html', {
+        'country': country
+    })

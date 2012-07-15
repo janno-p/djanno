@@ -15,6 +15,14 @@ class Country(models.Model):
 
     def __unicode__(self):
         return self.name
+    
+    def _get_common_coins(self):
+        return Coin.objects.filter(country__code=self.code, commemorative_year=None).order_by('nominal_value')
+    common_coins = property(_get_common_coins)
+    
+    def _get_commemorative_coins(self):
+        return Coin.objects.filter(country__code=self.code, commemorative_year__isnull=False).order_by('commemorative_year')
+    commemorative_coins = property(_get_commemorative_coins)
 
 
 def coins_path(coin, filename):
@@ -60,9 +68,9 @@ class Coin(models.Model):
     def __unicode__(self):
         return "%s | %.2f" % (self.country.name, self.nominal_value)
     
-    def _get_small_image_url(self):
+    def _get_image_url(self):
         if self.collected_at:
             return self.image.url_collected
         return self.image.url_thumb
     
-    small_image_url = property(_get_small_image_url)
+    image_url = property(_get_image_url)

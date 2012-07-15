@@ -1,0 +1,12 @@
+{% if country.common_coins %}
+    <h2>{{ country.genitive|capfirst }} üldised käibemündid</h2>
+    <ul>
+    {% for coin in country.common_coins %}
+        <li><img src="{{ coin.image_url }}" /></li>
+    {% endfor %}
+    </ul>
+{% endif %}
+
+{% if country.commemorative_coins %}
+    <h2>{{ country.genitive|capfirst }} mälestusmündid</h2>
+{% endif %}

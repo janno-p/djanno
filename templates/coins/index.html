@@ -1,0 +1,7 @@
+<h1>Euromüntide väljaandjad</h1>
+
+<ul>
+{% for country in countries %}
+    <li><a href="{% url coins.views.country country.code %}">{{ country.name }}</a></li>
+{% endfor %}
+</ul>
