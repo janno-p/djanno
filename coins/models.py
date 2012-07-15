@@ -59,3 +59,10 @@ class Coin(models.Model):
 
     def __unicode__(self):
         return "%s | %.2f" % (self.country.name, self.nominal_value)
+    
+    def _get_small_image_url(self):
+        if self.collected_at:
+            return self.image.url_collected
+        return self.image.url_thumb
+    
+    small_image_url = property(_get_small_image_url)
