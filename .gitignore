@@ -6,4 +6,6 @@ local_settings.py
 static/admin
 .project
 .pydevproject
+.settings
+media/coins
 
