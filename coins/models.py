@@ -2,7 +2,7 @@ import os
 
 from decimal import Decimal
 from django.db import models
-from coins.thumbnails import ThumbnailImageField
+from coins.thumbnails import ThumbnailedImageField
 
 
 class Country(models.Model):
@@ -52,11 +52,7 @@ class Coin(models.Model):
         decimal_places=2,
         choices = NOMINAL_VALUE_CHOICES)
     
-    image = ThumbnailImageField(
-        upload_to=coins_path,
-        sizes=((100,100),),
-        max_length=255)
-    
+    image = ThumbnailedImageField(upload_to=coins_path, watermark='watermark.png', max_length=255)
     commemorative_year = models.IntegerField(null=True, blank=True)
     collected_at = models.DateTimeField(null=True, blank=True)
     collected_by = models.CharField(max_length=255, null=True, blank=True)

@@ -2,54 +2,80 @@
 Uploads images with thumbnails if requested.
 """
 
-import os
-
+from os import path
+from os import system as cmd
+from django.conf import settings
 from django.db.models import ImageField
 from django.db.models.fields.files import ImageFieldFile
 
 
-class ThumbnailImageFieldFile(ImageFieldFile):
+class ThumbnailedImageFieldFile(ImageFieldFile):
     def __init__(self, *args, **kwargs):
-        super(ThumbnailImageFieldFile, self).__init__(*args, **kwargs)
-        self.sizes = self.field.sizes
+        super(ThumbnailedImageFieldFile, self).__init__(*args, **kwargs)
         
-        if self.sizes:
-            name_split = self.url.rsplit('.', 1)
-            for w, h in self.sizes:
-                attr_name = "url_%sx%s" % (w, h)
-                attr_value = "%s_%sx%s.%s" % (name_split[0], w, h, name_split[1])
-                setattr(self, attr_name, attr_value)
+        self.thumb_size = self.field.thumb_size
+        self.watermark = self.field.watermark
+        
+        parts = tuple(self.url.rsplit('.', 1))
+        
+        if self.thumb_size:
+            setattr(self, 'url_thumb', '%s_thumb.%s' % parts)
+            
+        if self.watermark:
+            setattr(self, 'url_collected', '%s_collected.%s' % parts)
     
     def save(self, name, content, save=True):
-        super(ThumbnailImageFieldFile, self).save(name, content, save)
-        if self.sizes:
-            name_split = self.name.rsplit('.', 1)
-            for w, h in self.sizes:
-                thumb_name = "%s_%sx%s.%s" % (name_split[0], w, h, name_split[1])
-                thumb_name_ = self.storage.save(thumb_name, content)
-                if not thumb_name == thumb_name_:
-                    raise ValueError('File already exists with the same name `%s`.' % thumb_name)
-                self_path = self.storage.path(self.name)
-                thumb_path = self.storage.path(thumb_name)
-                dim = "%sx%s" % (w, h)
-                cmd = 'convert %s -resize %s\> -size %s xc:white +swap -gravity center -composite %s' % (self_path, dim, dim, thumb_path)
-                os.system(cmd)
+        super(ThumbnailedImageFieldFile, self).save(name, content, save)
+        
+        if not self.thumb_size:
+            return
+        
+        parts = tuple(self.name.rsplit('.', 1))
+            
+        thumb_name = '%s_thumb.%s' % parts
+        if not thumb_name == self.storage.save(thumb_name, content):
+            raise ValueError('Thumbnail file already exists with the same name `%s`.' % thumb_name)
+
+        print(self.name)
+        image_path = self.storage.path(self.name)
+        print(image_path)
+        print(thumb_name)
+        thumb_path = self.storage.path(thumb_name)
+        print(thumb_path)
+        
+        size = '%dx%d' % self.thumb_size
+        
+        cmd('convert %s -resize %s\> -size %s xc:white +swap -gravity center -composite %s'
+                  % (image_path, size, size, thumb_path))
+        
+        if not self.watermark:
+            return
+        
+        collected_name = '%s_collected.%s' % parts
+        if not collected_name == self.storage.save(collected_name, content):
+            raise ValueError('Watermarked file already exists with the same name `%s`.' % collected_name)
+        
+        collected_path = self.storage.path(collected_name)
+        watermark_path = path.join(settings.STATIC_ROOT, self.watermark)
+        
+        cmd('composite -gravity center %s %s %s' % (watermark_path, thumb_path, collected_path))
     
     def delete(self, save=True):
-        super(ThumbnailImageFieldFile, self).delete(save)
-        if self.sizes:
-            name_split = self.name.rsplit('.', 1)
-            for w, h in self.sizes:
-                file_name = "%s_%sx%s.%s" % (name_split[0], w, h, name_split[1])
-                try:
-                    self.storage.delete(file_name)
-                except:
-                    pass
+        super(ThumbnailedImageFieldFile, self).delete(save)
+        
+        parts = self.name.rsplit('.', 1)
+        for middle in ['thumb', 'collected']:
+            file_name = "%s_%s.%s" % (parts[0], middle, parts[1])
+            try:
+                self.storage.delete(file_name)
+            except:
+                pass
 
 
-class ThumbnailImageField(ImageField):
-    attr_class = ThumbnailImageFieldFile
+class ThumbnailedImageField(ImageField):
+    attr_class = ThumbnailedImageFieldFile
     
-    def __init__(self, sizes=None, **kwargs):
-        super(ThumbnailImageField, self).__init__(**kwargs)
-        self.sizes = sizes
+    def __init__(self, thumb_size=(100,100), watermark=None, **kwargs):
+        super(ThumbnailedImageField, self).__init__(**kwargs)
+        self.thumb_size = thumb_size
+        self.watermark = watermark
