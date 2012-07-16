@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 import os
 
 from decimal import Decimal
@@ -17,16 +19,27 @@ class Country(models.Model):
         return self.name
     
     def _get_common_coins(self):
-        return Coin.objects.filter(country__code=self.code, commemorative_year=None).order_by('nominal_value')
+        return Coin.objects.filter(country=self, commemorative_year=None).order_by('nominal_value')
     common_coins = property(_get_common_coins)
     
     def _get_commemorative_coins(self):
-        return Coin.objects.filter(country__code=self.code, commemorative_year__isnull=False).order_by('commemorative_year')
+        return Coin.objects.filter(country=self, commemorative_year__isnull=False).order_by('commemorative_year')
     commemorative_coins = property(_get_commemorative_coins)
+    
+    def _get_collected_count(self):
+        return Coin.objects.filter(country=self, collected_at__isnull=False).count()
+    collected_count = property(_get_collected_count)
+    
+    def _get_total_count(self):
+        return Coin.objects.filter(country=self).count()
+    total_count = property(_get_total_count)
 
 
 def coins_path(coin, filename):
     country_name = coin.country.code
+    extension = os.path.splitext(filename)[-1]
+    if coin.commemorative_year:
+        return 'coins/%s_%d%s' % (country_name, coin.commemorative_year, extension)
     nominal_name = {
         '2.00': '2e',
         '1.00': '1e',
@@ -36,9 +49,8 @@ def coins_path(coin, filename):
         '0.05': '5c',
         '0.02': '2c',
         '0.01': '1c'
-    }["%.2f" % coin.nominal_value]
-    extension = os.path.splitext(filename)[-1]
-    return "coins/%s_%s%s" % (country_name, nominal_name, extension)
+    }['%.2f' % coin.nominal_value]
+    return 'coins/%s_%s%s' % (country_name, nominal_name, extension)
 
 
 class Coin(models.Model):
@@ -66,7 +78,9 @@ class Coin(models.Model):
     collected_by = models.CharField(max_length=255, null=True, blank=True)
 
     def __unicode__(self):
-        return "%s | %.2f" % (self.country.name, self.nominal_value)
+        if self.commemorative_year:
+            return u"%s comm. %d" % (self.country.genitive, self.commemorative_year)
+        return u"%s €%.2f" % (self.country.genitive, self.nominal_value)
     
     def _get_image_url(self):
         if self.collected_at:

@@ -1,7 +1,18 @@
-<h1>Euromüntide väljaandjad</h1>
+{% extends "layouts/base.html" %}
 
+{% block title %}Euromündid{% endblock %}
+
+{% block content %}
+<h1>Euromündid riikide kaupa</h1>
+
+{% if countries %}
 <ul>
 {% for country in countries %}
-    <li><a href="{% url coins.views.country country.code %}">{{ country.name }}</a></li>
+    <li>
+        <a href="{% url coins.views.country country.code %}">{{ country.name }}</a>
+        ({{ country.collected_count }} / {{ country.total_count }})
+    </li>
 {% endfor %}
 </ul>
+{% endif %}
+{% endblock %}
