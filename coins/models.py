@@ -4,7 +4,7 @@ import os
 
 from decimal import Decimal
 from django.db import models
-from coins.thumbnails import ThumbnailedImageField
+from coins.fields import CurrencyField, ThumbnailedImageField
 
 
 class Country(models.Model):
@@ -14,6 +14,7 @@ class Country(models.Model):
 
     class Meta:
         verbose_name_plural = 'Countries'
+        ordering = ['name']
 
     def __unicode__(self):
         return self.name
@@ -40,34 +41,24 @@ def coins_path(coin, filename):
     extension = os.path.splitext(filename)[-1]
     if coin.commemorative_year:
         return 'coins/%s_%d%s' % (country_name, coin.commemorative_year, extension)
-    nominal_name = {
-        '2.00': '2e',
-        '1.00': '1e',
-        '0.50': '50c',
-        '0.20': '20c',
-        '0.10': '10c',
-        '0.05': '5c',
-        '0.02': '2c',
-        '0.01': '1c'
-    }['%.2f' % coin.nominal_value]
-    return 'coins/%s_%s%s' % (country_name, nominal_name, extension)
+    return 'coins/%s_%s%s' % (country_name, coin.short_name, extension)
 
 
 class Coin(models.Model):
     NOMINAL_VALUE_CHOICES = (
-        (Decimal('2'), '2.00'),
-        (Decimal('1'), '1.00'),
-        (Decimal('0.5'), '0.50'),
-        (Decimal('0.2'), '0.20'),
-        (Decimal('0.1'), '0.10'),
-        (Decimal('0.05'), '0.05'),
-        (Decimal('0.02'), '0.02'),
-        (Decimal('0.01'), '0.01'),
+        (Decimal('2.00'), '€2.00'),
+        (Decimal('1.00'), '€1.00'),
+        (Decimal('0.50'), '€0.50'),
+        (Decimal('0.20'), '€0.20'),
+        (Decimal('0.10'), '€0.10'),
+        (Decimal('0.05'), '€0.05'),
+        (Decimal('0.02'), '€0.02'),
+        (Decimal('0.01'), '€0.01'),
     )
     
     country = models.ForeignKey(Country)
     
-    nominal_value = models.DecimalField(
+    nominal_value = CurrencyField(
         max_digits=3,
         decimal_places=2,
         choices = NOMINAL_VALUE_CHOICES)
@@ -76,15 +67,23 @@ class Coin(models.Model):
     commemorative_year = models.IntegerField(null=True, blank=True)
     collected_at = models.DateTimeField(null=True, blank=True)
     collected_by = models.CharField(max_length=255, null=True, blank=True)
+    
+    def _get_short_name(self):
+        nominal_str = str(self.nominal_value)
+        if nominal_str.endswith('.00'):
+            return '%se' % nominal_str[0]
+        if nominal_str.endswith('0'):
+            return '%s0c' % nominal_str[2]
+        return '%sc' % nominal_str[3]
+    short_name = property(_get_short_name)
 
     def __unicode__(self):
         if self.commemorative_year:
             return u"%s comm. %d" % (self.country.genitive, self.commemorative_year)
-        return u"%s €%.2f" % (self.country.genitive, self.nominal_value)
+        return u"%s €%s" % (self.country.genitive, self.nominal_value)
     
     def _get_image_url(self):
         if self.collected_at:
             return self.image.url_collected
         return self.image.url_thumb
-    
     image_url = property(_get_image_url)

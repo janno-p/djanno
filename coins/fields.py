@@ -4,8 +4,9 @@ Uploads images with thumbnails if requested.
 
 from os import path
 from os import system as cmd
+from decimal import Decimal
 from django.conf import settings
-from django.db.models import ImageField
+from django.db.models import ImageField, DecimalField, SubfieldBase
 from django.db.models.fields.files import ImageFieldFile
 
 
@@ -79,3 +80,13 @@ class ThumbnailedImageField(ImageField):
         super(ThumbnailedImageField, self).__init__(**kwargs)
         self.thumb_size = thumb_size
         self.watermark = watermark
+
+
+class CurrencyField(DecimalField):
+    __metaclass__ = SubfieldBase
+    
+    def to_python(self, value):
+        try:
+            return super(CurrencyField, self).to_python(value).quantize(Decimal('0.01'))
+        except AttributeError:
+            return None
