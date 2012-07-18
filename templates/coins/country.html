@@ -1,23 +1,36 @@
-{% extends "layouts/base.html" %}
+{% extends "coins/base.html" %}
 
 {% block title %}{{ country.genitive }} euromündid{% endblock %}
 
-{% block content %}
+{% block page_content %}
+{% if not country.common_coins %}
+{% if not country.commemorative_coins %}
+<article>
+    <h1>{{ country.genitive|capfirst }} euromündid</h1>
+    <p><cite>Ei leitud infot ühegi mündi kohta.</cite></p>
+</article>
+{% endif %}
+{% endif %}
+
 {% if country.common_coins %}
-    <h2>{{ country.genitive|capfirst }} üldised käibemündid</h2>
+<article>
+    <h1>{{ country.genitive|capfirst }} üldised käibemündid</h1>
     <ul>
-    {% for coin in country.common_coins %}
+        {% for coin in country.common_coins %}
         <li><img src="{{ coin.image_url }}" /></li>
-    {% endfor %}
+        {% endfor %}
     </ul>
+</article>
 {% endif %}
 
 {% if country.commemorative_coins %}
-    <h2>{{ country.genitive|capfirst }} mälestusmündid</h2>
+<article>
+    <h1>{{ country.genitive|capfirst }} mälestusmündid</h1>
     <ul>
-    {% for coin in country.commemorative_coins %}
+        {% for coin in country.commemorative_coins %}
         <li><img src="{{ coin.image_url }}" /></li>
-    {% endfor %}
+        {% endfor %}
     </ul>
+</article>
 {% endif %}
 {% endblock %}

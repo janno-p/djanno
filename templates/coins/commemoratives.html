@@ -1,0 +1,9 @@
+<section id="commemorative-coins">
+    {% if commemorative_years %}
+    <ul>
+    {% for year in commemorative_years %}
+        <li><a href="{% url coins.views.commemorative year %}">{{ year }}</a></li>
+    {% endfor %}
+    </ul>
+    {% endif %}
+</section>

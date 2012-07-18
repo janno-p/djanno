@@ -1,0 +1,16 @@
+{% extends "coins/base.html" %}
+
+{% block title %}Euromündid väärtusega &euro;{{ nominal_value }}{% endblock %}
+
+{% block page_content %}
+<article>
+    <h1>Euromündid väärtusega &euro;{{ nominal_value }}</h1>
+    {% if coins %}
+    <ul>
+        {% for coin in coins %}
+        <li><img src="{{ coin.image_url }}" title="{{ coin.country.name }}" alt="{{ coin.country.name }}" /></li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</article>
+{% endblock %}

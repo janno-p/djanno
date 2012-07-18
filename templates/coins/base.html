@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div id="container">
+    <header>
+        <h1><a href="/" title="Põllukate mündikogu">Põllukate mündikogu</a></h1>
+    </header>
+
+    <div id="content">
+        {% block page_content %}{% endblock %}
+    </div>
+
+    <aside id="sidebar">
+        <h3>Kiirvalikud</h3>
+        {% include "coins/countries.html" %}
+        {% include "coins/nominals.html" %}
+        {% include "coins/commemoratives.html" %}
+    </aside>
+</div>
+
+<div id="footer-container">
+    <footer>
+        <ul id="credits">
+            <li><a href="http://www.djangoproject.com/"><img src="https://www.djangoproject.com/m/img/badges/djangomade124x25.gif" border="0" alt="Made with Django." title="Made with Django." /></a></li>
+        </ul>
+    </footer>
+</div>
+{% endblock %}

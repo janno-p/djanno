@@ -1,0 +1,9 @@
+<section id="common-coins">
+    {% if nominal_values %}
+    <ul>
+    {% for nominal_value in nominal_values %}
+        <li><a href="{% url coins.views.nominal nominal_value %}">&euro;{{ nominal_value }}</a></li>
+    {% endfor %}
+    </ul>
+    {% endif %}
+</section>

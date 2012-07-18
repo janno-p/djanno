@@ -1,0 +1,16 @@
+{% extends "coins/base.html" %}
+
+{% block title %}Mälestusmündid aastast {{ year }}{% endblock %}
+
+{% block page_content %}
+<article>
+    <h1>Mälestusmündid aastast {{ year }}</h1>
+    {% if coins %}
+    <ul>
+        {% for coin in coins %}
+        <li><img src="{{ coin.image_url }}" title="{{ coin.country }}" alt="{{ coin.country }}" /></li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</article>
+{% endblock %}
