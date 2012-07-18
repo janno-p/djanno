@@ -90,4 +90,6 @@ class Coin(models.Model):
 
     @staticmethod
     def get_commemorative_year_list():
-        return [t[0] for t in Coin.objects.values_list('commemorative_year').filter(commemorative_year__isnull=False).order_by('-commemorative_year')]
+        query_set = Coin.objects.values_list('commemorative_year').filter(commemorative_year__isnull=False).order_by('-commemorative_year')
+        query_set.query.group_by = []
+        return [row[0] for row in query_set]
