@@ -61,7 +61,7 @@ class Coin(models.Model):
     nominal_value = CurrencyField(
         max_digits=3,
         decimal_places=2,
-        choices = NOMINAL_VALUE_CHOICES)
+        choices=NOMINAL_VALUE_CHOICES)
     
     image = ThumbnailedImageField(upload_to=coins_path, watermark='watermark.png', max_length=255)
     commemorative_year = models.IntegerField(null=True, blank=True)
