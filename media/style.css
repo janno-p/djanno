@@ -51,7 +51,12 @@ header h1 {
 }
 
 #content article {
+    clear: both;
     margin: 0 0 67px 0;
+}
+
+#content article h1 {
+    margin: 0 0 10px 0;
 }
 
 #content article h2 {
@@ -131,4 +136,13 @@ footer #credits {
 footer #credits li {
     float: left;
     margin: 0 6px 0 0;
+}
+
+#content article ul {
+    list-style: none;
+}
+
+#content article li {
+    float: left;
+    margin: 0 0 0 5px;
 }

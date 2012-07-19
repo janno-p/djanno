@@ -17,7 +17,7 @@
     <h1>{{ country.genitive|capfirst }} üldised käibemündid</h1>
     <ul>
         {% for coin in country.common_coins %}
-        <li><img src="{{ coin.image_url }}" /></li>
+        <li><img src="{{ coin.image_url }}" title="&euro;{{ coin.nominal_value }}" alt="&euro;{{ coin.nominal_value }}" /></li>
         {% endfor %}
     </ul>
 </article>
@@ -28,7 +28,7 @@
     <h1>{{ country.genitive|capfirst }} mälestusmündid</h1>
     <ul>
         {% for coin in country.commemorative_coins %}
-        <li><img src="{{ coin.image_url }}" /></li>
+        <li><img src="{{ coin.image_url }}" title="{{ coin.commemorative_year }}" alt="{{ coin.commemorative_year }}" /></li>
         {% endfor %}
     </ul>
 </article>
