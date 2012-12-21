@@ -10,6 +10,7 @@ Python package dependencies for the applications.
 
 * [Python 2.7](http://python.org/)
 * [Django 1.4](http://www.djangoproject.com/)
+* [Django Social Auth](https://github.com/omab/django-social-auth)
 
 ### coins app ###
 

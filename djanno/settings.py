@@ -119,6 +119,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.admin',
+    'social_auth',
     'coins',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
@@ -152,6 +153,17 @@ LOGGING = {
         },
     }
 }
+
+AUTHENTICATION_BACKENDS = (
+    'social_auth.backends.google.GoogleBackend',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_URL = '/logout/'
+
+SOCIAL_AUTH_OPENID_PAPE_MAX_AUTH_AGE = 0
 
 try:
     from local_settings import *

@@ -1,4 +1,5 @@
 *.db
+*.sqlite
 *.log
 *.pot
 *.pyc
@@ -8,4 +9,4 @@ static/admin
 .pydevproject
 .settings
 media/coins
-
+.idea
