@@ -1,0 +1,35 @@
+{% extends "blog/base.html" %}
+
+{% load markup %}
+
+{% block content %}
+    <div class="main">
+        <ul>
+            {% for post in posts.object_list %}
+                <div class="title">{{ post.title }}</div>
+                <ul>
+                    <div class="time">{{ post.created_at }}</div>
+                    <div class="body">{{ post.content|markdown:"extra,codehilite"|safe }}</div>
+                </ul>
+            {% endfor %}
+        </ul>
+
+        {% if post.object_list and post.paginator.num_pages > 1 %}
+        <div class="pagination" style="margin-top: 20px; margin-left: -20px">
+            <span class="step-links">
+                {% if posts.has_previous %}
+                    <a href="?page={{ posts.previous_page_number }}">newer entries &laquo;</a>
+                {% endif %}
+
+                <span class="current">
+                    &nbsp;Page {{ posts.number }} of {{ post.paginator.num_pages }}
+                </span>
+
+                {% if posts.has_next %}
+                    <a href="?page={{ posts.next_page_number }}">&raquo; older entries</a>
+                {% endif %}
+            </span>
+        </div>
+        {% endif %}
+    </div>
+{% endblock %}
