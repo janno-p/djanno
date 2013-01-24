@@ -9,6 +9,12 @@
                 <div class="title">{{ post.title }}</div>
                 <ul>
                     <div class="time">{{ post.created_at }}</div>
+                    {% if user.is_staff %}
+                    <div class="admin">
+                        <a href="{% url admin:blog_post_change post.id %}">Change</a> |
+                        <a href="{% url admin:blog_post_delete post.id %}">Delete</a>
+                    </div>
+                    {% endif %}
                     <div class="body">{{ post.content|markdown:"extra,codehilite"|safe }}</div>
                 </ul>
             {% endfor %}
