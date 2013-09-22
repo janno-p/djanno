@@ -2,7 +2,7 @@
     {% if countries %}
     <ul>
     {% for country in countries %}
-        <li><a href="{% url coins.views.country country.code %}">{{ country.name }}</a></li>
+        <li><a href="{% url 'coins.views.country' country.code %}">{{ country.name }}</a></li>
     {% endfor %}
     </ul>
     {% endif %}

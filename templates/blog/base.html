@@ -11,8 +11,8 @@
             {% block nav-global %}
                 <h3>Bla</h3>
                 {% if user.is_staff %}
-                <a href="{% url admin:index %}">Admin</a>
-                <a href="{% url admin:blog_post_add %}">Add post</a>
+                <a href="{% url 'admin:index' %}">Admin</a>
+                <a href="{% url 'admin:blog_post_add' %}">Add post</a>
                 {% endif %}
             {% endblock %}
         </div>
